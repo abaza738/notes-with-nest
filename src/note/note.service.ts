@@ -1,4 +1,8 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateNoteDto } from './dto/create-note.dto';
 import { UpdateNoteDto } from './dto/update-note.dto';
 import { readFile, writeFile } from 'fs';
@@ -17,16 +21,22 @@ export class NoteService {
   }
 
   create = async (createNoteDto: CreateNoteDto) => {
+    const id = this.notes.length;
     const note = {
-      id: this.notes.length,
+      id: id,
       ...createNoteDto,
       important: false,
       time: new Date().toISOString(),
     };
     this.notes.push(note);
-    await this.reorderNotes();
-    await this.writerNotes(this.notes);
-    await this.readNotes();
+    try {
+      await this.reorderNotes();
+      await this.writerNotes(this.notes);
+      await this.readNotes();
+    } catch (e: any) {
+      throw new InternalServerErrorException(e);
+    }
+    return id;
   };
 
   findAll = async () => {
@@ -35,7 +45,11 @@ export class NoteService {
   };
 
   findOne = async (id: number) => {
-    return this.notes.find((n) => n.id == id);
+    const result = this.notes.find((n) => n.id == id);
+    if (!result) {
+      throw new NotFoundException('Sorry, could not find that note, mate.');
+    }
+    return result;
   };
 
   update = async (id: number, updateNoteDto: UpdateNoteDto) => {
