@@ -60,9 +60,14 @@ export class NoteService {
       important: oldNote.important,
       time: new Date().toISOString(),
     };
-    this.notes.splice(this.notes.indexOf(oldNote), 1, note);
-    await this.writerNotes(this.notes);
-    await this.readNotes();
+    try {
+      this.notes.splice(this.notes.indexOf(oldNote), 1, note);
+      await this.writerNotes(this.notes);
+      await this.readNotes();
+    } catch (e) {
+      throw new InternalServerErrorException(e);
+    }
+    return id;
   };
 
   remove = async (id: number) => {
