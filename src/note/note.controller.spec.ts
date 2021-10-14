@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 import { Test, TestingModule } from '@nestjs/testing';
 import { CreateNoteDto } from './dto/create-note.dto';
 import { NoteController } from './note.controller';
@@ -8,9 +9,19 @@ describe('NoteController', () => {
   let service: NoteService;
 
   beforeEach(async () => {
+    const ApiServiceProvider = {
+      provide: NoteService,
+      useFactory: () => ({
+        create: jest.fn(() => []),
+        findAll: jest.fn(() => []),
+        findOne: jest.fn(() => {}),
+        updateNote: jest.fn(() => {}),
+        deleteNote: jest.fn(() => {}),
+      }),
+    };
     const module: TestingModule = await Test.createTestingModule({
       controllers: [NoteController],
-      providers: [NoteService],
+      providers: [NoteService, ApiServiceProvider],
     }).compile();
 
     controller = module.get<NoteController>(NoteController);
