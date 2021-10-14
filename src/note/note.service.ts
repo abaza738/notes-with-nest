@@ -41,15 +41,16 @@ export class NoteService {
 
   findAll = async () => {
     this.notes = await this.readNotes();
-    return this.notes;
+    return [...this.notes];
   };
 
   findOne = async (id: number) => {
+    await this.readNotes();
     const result = this.notes.find((n) => n.id == id);
     if (!result) {
       throw new NotFoundException('Sorry, could not find that note, mate.');
     }
-    return result;
+    return { ...result };
   };
 
   update = async (id: number, updateNoteDto: UpdateNoteDto) => {
