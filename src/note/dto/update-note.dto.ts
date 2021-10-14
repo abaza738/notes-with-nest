@@ -7,4 +7,5 @@ export class UpdateNoteDto extends PartialType(CreateNoteDto) {
   line: string;
   description: string;
   status: string;
+  important: boolean;
 }

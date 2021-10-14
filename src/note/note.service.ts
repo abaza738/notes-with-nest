@@ -58,7 +58,6 @@ export class NoteService {
     const note = {
       id: id,
       ...updateNoteDto,
-      important: oldNote.important,
       time: new Date().toISOString(),
     };
     try {
