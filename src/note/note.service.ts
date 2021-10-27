@@ -48,7 +48,7 @@ export class NoteService {
     await this.readNotes();
     const result = this.notes.find((n) => n.id == id);
     if (!result) {
-      throw new NotFoundException('Sorry, could not find that note, mate.');
+      throw new NotFoundException(`Note ID ${id} not found.`);
     }
     return { ...result };
   };
